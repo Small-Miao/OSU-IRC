@@ -19,6 +19,7 @@ namespace OSU_IRC聊天
         public string IrcUser;
         public string Password { set{ IrcPassword = value; }get{ return IrcPassword; } }
         string IrcPassword;
+        List<String> messageList;
         public void Disco()
         {
             IRC.Disconnect();
@@ -85,7 +86,17 @@ namespace OSU_IRC聊天
         private void IRC_OnQueryMessage(object sender, IrcEventArgs e)
         {
 
-            Console.WriteLine("[" + System.DateTime.Now + "私聊" + "]" + e.Data.Nick+":" + e.Data.Message);
+            messageList.Add("[" + System.DateTime.Now + "私聊" + "]" + e.Data.Nick+":" + e.Data.Message);
+            const int kScreenHight = 20;
+            int kShowMax = messageList.Count > kScreenHight
+                ? kScreenHight
+                : messageList.Count;
+            int cur = messageList.Count - kShowMax;
+            for (int line = 0; line < kShowMax; line++, cur++)
+            {
+                Console.SetCursorPosition(0, line);
+                Console.WriteLine(messageList[cur]);
+            }
 
         }
 
@@ -100,10 +111,19 @@ namespace OSU_IRC聊天
         private void IRC_OnChannelMessage(object sender, IrcEventArgs e)
         {
 
-        
-            Console.WriteLine("[" + System.DateTime.Now + "来自" + e.Data.Channel + "]" + e.Data.Nick + ":" + e.Data.Message);
-           
 
+            messageList.Add("[" + System.DateTime.Now + "来自" + e.Data.Channel + "]" + e.Data.Nick + ":" + e.Data.Message);
+
+            const int kScreenHight = 20;
+            int kShowMax = messageList.Count > kScreenHight
+                ? kScreenHight
+                : messageList.Count;
+            int cur = messageList.Count - kShowMax;
+            for (int line = 0; line < kShowMax; line++,cur++)
+            {
+                Console.SetCursorPosition(0, line);
+                Console.WriteLine(messageList[cur]);
+            }
         }
 
         public static void send(string message, string Chanl)
